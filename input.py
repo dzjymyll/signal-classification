@@ -3,13 +3,51 @@ import pandas as pd
 import numpy as np
 import cv2
 from keras.utils import to_categorical
+import json
+from pandas.io.json import json_normalize
 
 from sklearn.model_selection import train_test_split
+
+dict = pd.read_json('Training_Task_Alex_201904/Sample_RawData.json')
+New = []
+New_x = []
+New_x = np.array(New_x, dtype = np.float32)
+New_y = []
+New_y = np.array(New_y, dtype = np.float32)
+New_z = []
+New_z = np.array(New_z, dtype = np.float32)
+
+
+for n in range(0,81):
+    value = dict['valueList']
+    value = value.loc[n]
+    m = value['input']
+    x = m['Chart_1']
+    y = m['Chart_2']
+    z = m['Chart_3']
+
+    if n == 0 :
+        New_x = x
+        New_y = y
+        New_z = z
+
+    else:
+        New_x = np.append(New_x,x)
+        New_y = np.append(New_y,y)
+        New_z = np.append(New_z,z)
+
+New = np.dstack((New_x,New_y,New_z))
+New = np.resize(New,(1,24,3))
+print(New.shape)
+
+
 
 x_train_class_1 = pd.read_excel('Training_Task_Alex_201904/BP3_Control_Raw_Data_Double_Clicks.xlsx',sheet_name='Gyro_x')
 y_train_class_1 = pd.read_excel('Training_Task_Alex_201904/BP3_Control_Raw_Data_Double_Clicks.xlsx',sheet_name='Gyro_y')
 z_train_class_1 = pd.read_excel('Training_Task_Alex_201904/BP3_Control_Raw_Data_Double_Clicks.xlsx',sheet_name='Gyro_z')
 train_class_1_label = pd.read_excel('Training_Task_Alex_201904/BP3_Control_Raw_Data_Double_Clicks.xlsx',sheet_name='Model_2_Label')
+
+
 
 train_class_1_label = train_class_1_label.dropna(subset=['Start'])
 idx = pd.Index(train_class_1_label['No.'])
@@ -66,11 +104,6 @@ train_input = np.concatenate((r1, r2))
 label=np.array(label)
 print(train_input.shape)
 print(label.shape)
-
-
-# split into input (X) and output (Y) variables
-#X = dataset[:,0:8]
-#Y = dataset[:,8]
 
 #normalize the data
 #scaler = Normalizer().fit(X)
