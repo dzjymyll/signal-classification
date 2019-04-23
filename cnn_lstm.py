@@ -68,4 +68,42 @@ print('Test accuracy:', acc)
 
 ynew = model.predict_proba(input.New)
 
-print(ynew)
+print('Class_1',ynew)
+
+########################################class_2
+
+x_train = input.traindata_2
+y_train = input.trainlabel_2
+x_test = input.testdata_2
+y_test = input.testlabel_2
+
+model_2 = Sequential()
+
+model_2.add(Conv1D(filters,
+                 kernel_size,
+                 padding='valid',
+                 activation='relu',
+                 strides=1))
+model_2.add(MaxPooling1D(pool_size=pool_size))
+model_2.add(LSTM(lstm_output_size))
+model_2.add(Dense(1))
+model_2.add(Activation('sigmoid'))
+
+model_2.compile(loss='binary_crossentropy',
+              optimizer='adam',
+              metrics=['accuracy'])
+
+print('Train...')
+model_2.fit(x_train, y_train,
+          batch_size=batch_size,
+          epochs=epochs,
+          validation_data=(x_test, y_test))
+
+
+score, acc = model.evaluate(x_test, y_test, batch_size=batch_size)
+print('Test score:', score)
+print('Test accuracy:', acc)
+
+ynew = model_2.predict_proba(input.New)
+
+print('Class_2',ynew)
