@@ -53,7 +53,7 @@ train_class_1_label = train_class_1_label.dropna(subset=['Start'])
 idx = pd.Index(train_class_1_label['No.'])
 
 label = []
-
+label_2 = []
 r1 = []
 count_1 = 0
 for i in idx - 1:
@@ -67,6 +67,7 @@ for i in idx - 1:
     record = np.dstack((x_record,y_record,z_record))
     record = np.resize(record,(1,24,3))
     label.append(1)
+    label_2.append(0)
     if count_1 == 0 :
         r1 = record
     else:
@@ -94,6 +95,7 @@ for i in idx - 1:
     record = np.dstack((x_record,y_record,z_record))
     record = np.resize(record,(1,24,3))
     label.append(0)
+    label_2.append(1)
     if count == 0 :
         r2 = record
     else:
@@ -102,8 +104,11 @@ for i in idx - 1:
 
 train_input = np.concatenate((r1, r2))
 label=np.array(label)
+label_2 = np.array(label_2)
+
 print(train_input.shape)
 print(label.shape)
+print(label_2.shape)
 
 #normalize the data
 #scaler = Normalizer().fit(X)
@@ -111,5 +116,7 @@ print(label.shape)
 
 #label = to_categorical(label)
 traindata, testdata, trainlabel, testlabel = train_test_split(train_input,label, test_size=0.33, random_state=42)
-expected = testlabel
+
+traindata_2,testdata_2,trainlabel_2,testlabel_2 = train_test_split(train_input,label_2, test_size=0.33, random_state=42)
+
 
