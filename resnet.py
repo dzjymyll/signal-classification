@@ -226,3 +226,52 @@ model.fit(x_train, y_train,batch_size=batch_size,epochs=epochs,validation_data=(
 scores = model.evaluate(x_test, y_test, verbose=1)
 print('Test loss:', scores[0])
 print('Test accuracy:', scores[1])
+
+ynew = model.predict(input.New)
+
+print('Class_1',np.argmax(ynew,axis=1))
+
+###########################################################class_2
+'''
+model_2 = resnet_v1(input_shape=input_shape, depth=depth)
+
+
+model_2.compile(loss='categorical_crossentropy',
+              optimizer=Adam(lr=lr_schedule(0)),
+              metrics=['accuracy'])
+model_2.summary()
+print(model_type)
+
+# Prepare model model saving directory.
+
+save_dir = os.path.join(os.getcwd(), 'saved_models')
+model_name = 'signal_%s_model.{epoch:03d}.h5' % model_type
+if not os.path.isdir(save_dir):
+    os.makedirs(save_dir)
+filepath = os.path.join(save_dir, model_name)
+
+# Prepare callbacks for model saving and for learning rate adjustment.
+checkpoint = ModelCheckpoint(filepath=filepath,
+                             monitor='val_acc',
+                             verbose=1,
+                             save_best_only=True)
+
+lr_scheduler = LearningRateScheduler(lr_schedule)
+
+lr_reducer = ReduceLROnPlateau(factor=np.sqrt(0.1),
+                               cooldown=0,
+                               patience=5,
+                               min_lr=0.5e-6)
+
+callbacks = [checkpoint, lr_reducer, lr_scheduler]
+
+model_2.fit(input.traindata_2, input.trainlabel_2,batch_size=batch_size,epochs=epochs,validation_data=(input.testdata_2, input.testlabel_2),shuffle=True,callbacks=callbacks)
+
+scores = model.evaluate(input.testdata_2, input.testlabel_2, verbose=1)
+print('Test loss:', scores[0])
+print('Test accuracy:', scores[1])
+
+ynew = model_2.predict(input.New)
+
+print('Class_2',np.argmax(ynew,axis=1))
+'''
