@@ -222,7 +222,6 @@ callbacks = [checkpoint, lr_reducer, lr_scheduler]
 
 model.fit(x_train, y_train,batch_size=batch_size,epochs=epochs,validation_data=(x_test, y_test),shuffle=True,callbacks=callbacks)
 
-
 scores = model.evaluate(x_test, y_test, verbose=1)
 print('Test loss:', scores[0])
 print('Test accuracy:', scores[1])
@@ -232,7 +231,37 @@ ynew = model.predict(input.New)
 print('Class_1',np.argmax(ynew,axis=1))
 
 ###########################################################class_2
-'''
+
+
+
+x_train = input.traindata_2
+y_train = input.trainlabel_2
+x_test = input.testdata_2
+y_test = input.testlabel_2
+
+# Input image dimensions.
+input_shape = x_train.shape[1:]
+
+# Normalize data.
+x_train = x_train.astype('float32') / 255
+x_test = x_test.astype('float32') / 255
+
+# If subtract pixel mean is enabled
+if subtract_pixel_mean:
+    x_train_mean = np.mean(x_train, axis=0)
+    x_train -= x_train_mean
+    x_test -= x_train_mean
+
+print('x_train shape:', x_train.shape)
+print(x_train.shape[0], 'train samples')
+print(x_test.shape[0], 'test samples')
+print('y_train shape:', y_train.shape)
+
+# Convert class vectors to binary class matrices.
+y_train = keras.utils.to_categorical(y_train, num_classes)
+y_test = keras.utils.to_categorical(y_test, num_classes)
+
+
 model_2 = resnet_v1(input_shape=input_shape, depth=depth)
 
 
@@ -242,36 +271,14 @@ model_2.compile(loss='categorical_crossentropy',
 model_2.summary()
 print(model_type)
 
-# Prepare model model saving directory.
-
-save_dir = os.path.join(os.getcwd(), 'saved_models')
-model_name = 'signal_%s_model.{epoch:03d}.h5' % model_type
-if not os.path.isdir(save_dir):
-    os.makedirs(save_dir)
-filepath = os.path.join(save_dir, model_name)
-
-# Prepare callbacks for model saving and for learning rate adjustment.
-checkpoint = ModelCheckpoint(filepath=filepath,
-                             monitor='val_acc',
-                             verbose=1,
-                             save_best_only=True)
-
-lr_scheduler = LearningRateScheduler(lr_schedule)
-
-lr_reducer = ReduceLROnPlateau(factor=np.sqrt(0.1),
-                               cooldown=0,
-                               patience=5,
-                               min_lr=0.5e-6)
-
 callbacks = [checkpoint, lr_reducer, lr_scheduler]
 
-model_2.fit(input.traindata_2, input.trainlabel_2,batch_size=batch_size,epochs=epochs,validation_data=(input.testdata_2, input.testlabel_2),shuffle=True,callbacks=callbacks)
+model_2.fit(x_train, y_train,batch_size=batch_size,epochs=epochs,validation_data=(x_test, y_test),shuffle=True,callbacks=callbacks)
 
-scores = model.evaluate(input.testdata_2, input.testlabel_2, verbose=1)
+scores = model_2.evaluate(x_test, y_test, verbose=1)
 print('Test loss:', scores[0])
 print('Test accuracy:', scores[1])
 
 ynew = model_2.predict(input.New)
 
-print('Class_2',np.argmax(ynew,axis=1))
-'''
+print('Class_1',np.argmax(ynew,axis=1))
